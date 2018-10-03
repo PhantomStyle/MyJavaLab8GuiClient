@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -17,7 +18,7 @@ import java.net.Socket;
 public class Main extends Application {
 
     @FXML
-    private TextArea showingField;
+    private ListView<String> showingField;
 
     @FXML
     private TextField enteringField;
@@ -28,7 +29,7 @@ public class Main extends Application {
     private String clientCommand = "";
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 800, 500));
@@ -40,27 +41,29 @@ public class Main extends Application {
         String name = "kek";
         Socket socket = new Socket("localhost", 3345);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        DataOutputStream oos = new DataOutputStream(socket.getOutputStream());
+//        DataOutputStream oos = new DataOutputStream(socket.getOutputStream());
+        BufferedWriter oos = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         DataInputStream ois = new DataInputStream(socket.getInputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         runAll(socket, br, oos, ois, reader);
     }
 
-    private synchronized void runSender(Socket socket, BufferedReader br, DataOutputStream oos, DataInputStream ois) {
+    private synchronized void runSender(Socket socket, BufferedReader br, BufferedWriter oos, DataInputStream ois) {
         new Thread() {
 
             @Override
             public void run() {
+                System.out.println(1);
                 while (!socket.isOutputShutdown()) {
-
 // ждём консоли клиента на предмет появления в ней данных
                     try {
-                        if (br.ready()) {
-
+                        Thread.sleep(1000);
+                        if (!clientCommand.equals("")) {
+//                            System.out.println(2);
                             // данные появились - работаем
                             System.out.println("Client start writing in channel...");
-                            Thread.sleep(1000);
-                            String clientCommand = "";
+//                            Thread.sleep(1000);
+//                            String clientCommand = "";
 //                            if(button.isPressed()) {
 //                                clientCommand = enteringField.getText();
 //                            }
@@ -69,10 +72,10 @@ public class Main extends Application {
                             // пишем данные с консоли в канал сокета для сервера
                             //TODO: name
                             clientCommand = "kek" + ": " + clientCommand;
-                            oos.writeUTF(clientCommand);
+                            oos.write(clientCommand + "\n");
                             oos.flush();
                             //                    System.out.println(clientCommand);
-                            Thread.sleep(1000);
+//                            Thread.sleep(1000);
                             // ждём чтобы сервер успел прочесть сообщение из сокета и ответить
 
                             // проверяем условие выхода из соединения
@@ -80,7 +83,7 @@ public class Main extends Application {
 
                                 // если условие выхода достигнуто разъединяемся
                                 System.out.println("Client kill connections");
-                                Thread.sleep(2000);
+//                                Thread.sleep(2000);
 
                                 // смотрим что нам ответил сервер на последок перед закрытием ресурсов
                                 if (ois.read() > -1) {
@@ -89,10 +92,11 @@ public class Main extends Application {
                                     System.out.println(in);
                                 }
 
+
                                 // после предварительных приготовлений выходим из цикла записи чтения
                                 break;
                             }
-
+                            clientCommand = "";
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -104,23 +108,49 @@ public class Main extends Application {
         }.start();
     }
 
-    private synchronized void runPrinter(BufferedReader reader, DataInputStream ois) {
-        new Thread(){
+    private synchronized void runPrinter(BufferedReader reader, DataInputStream ois, Socket socket) {
+        new Thread() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+//                InputStream inputStream = null;
+//                try {
+//                    inputStream = socket.getInputStream();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                BufferedReader reader1 = null;
+//                try {
+//                    reader1 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 while (true) {
-                    try {
-                        if (ois.read() > -1) {
+                    try  {
+                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
 
-                            // если успел забираем ответ из канала сервера в сокете и сохраняем её в ois переменную,  печатаем на свою клиентскую консоль
-                            //                        System.out.println("reading...");
-                            String in = reader.readLine();
-                            //                        String in = ois.readUTF();
-                            showingField.setText(in);
+//                        String in = reader.readLine();
+//                        if (reader.ready()) {
 //                            System.out.println(in);
 
-                        }
+                        // если успел забираем ответ из канала сервера в сокете и сохраняем её в ois переменную,  печатаем на свою клиентскую консоль
+                        //                        System.out.println("reading...");
+                        String in = reader.readLine();
+                        //                        String in = ois.readUTF();
+                        showingField.getItems().add(in);
+//                            System.out.println(in);
+
+//                        }
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -128,9 +158,9 @@ public class Main extends Application {
         }.start();
     }
 
-    private synchronized void runAll(Socket socket, BufferedReader br, DataOutputStream oos, DataInputStream ois, BufferedReader reader){
+    private synchronized void runAll(Socket socket, BufferedReader br, BufferedWriter oos, DataInputStream ois, BufferedReader reader) {
         runSender(socket, br, oos, ois);
-        runPrinter(reader, ois);
+        runPrinter(reader, ois, socket);
     }
 
 
@@ -138,6 +168,7 @@ public class Main extends Application {
     private void handleButton1Action(ActionEvent event) {
 
         clientCommand = enteringField.getText();
+        enteringField.clear();
 
     }
 
