@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Main">
+   <children>
+      <TextField fx:id="enteringField" layoutX="54.0" layoutY="317.0" prefHeight="25.0" prefWidth="429.0" />
+      <TextArea fx:id="showingField" layoutX="54.0" layoutY="40.0" prefHeight="271.0" prefWidth="482.0" />
+      <ScrollBar layoutX="522.0" layoutY="40.0" orientation="VERTICAL" prefHeight="271.0" prefWidth="14.0" />
+      <Button fx:id="button" layoutX="483.0" layoutY="317.0" mnemonicParsing="false" onAction="#handleButton1Action" text="Send" />
+   </children>
+</AnchorPane>
