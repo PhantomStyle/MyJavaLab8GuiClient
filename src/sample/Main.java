@@ -1,35 +1,103 @@
 package sample;
 
+import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends Application {
+
+    @FXML
+    private Button button;
 
     @FXML
     private ListView<String> showingField;
 
     @FXML
+    private PasswordField passField;
+
+    @FXML
     private TextField enteringField;
 
     @FXML
-    private Button button;
+    private Button buttonLogin;
+
+    @FXML
+    private TextField loginField;
+
+    @FXML
+    private Text text1;
+
+    @FXML
+    private Text text2;
 
     private String clientCommand = "";
 
+
+    private static Stage stage;
+
+    private String login;
+    private String pass;
+
+    private static Map<String, String> db = new HashMap<>();
+
+    static {
+        db.put("root", "root");
+        db.put("kek", "kek");
+    }
+
+    private String name = "";
+
+    @FXML
+    void onLoginButton(ActionEvent event) {
+        String login = loginField.getText();
+        String pass = passField.getText();
+        this.login = login;
+        this.pass = pass;
+        try {
+            if (db.get(login).equals(pass)) {
+//                stage.close();
+//                new Thread(() -> Main.launch(Main.class)).start();
+                loginField.setVisible(false);
+                passField.setVisible(false);
+                buttonLogin.setVisible(false);
+                text1.setVisible(false);
+                text2.setVisible(false);
+                button.setVisible(true);
+                showingField.setVisible(true);
+                enteringField.setVisible(true);
+                name = login;
+            }
+        } catch (Exception e) {
+            Stage st = new Stage();
+            st.initModality(Modality.APPLICATION_MODAL);
+            st.initOwner(stage);
+            VBox dialogVbox = new VBox(20);
+            dialogVbox.getChildren().add(new Text("Wrong credentials"));
+            Scene dialogScene = new Scene(dialogVbox, 300, 200);
+            st.setScene(dialogScene);
+            st.show();
+            loginField.clear();
+            passField.clear();
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 800, 500));
@@ -38,7 +106,9 @@ public class Main extends Application {
 
     @FXML
     public void initialize() throws IOException {
-        String name = "kek";
+        button.setVisible(false);
+        showingField.setVisible(false);
+        enteringField.setVisible(false);
         Socket socket = new Socket("localhost", 3345);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //        DataOutputStream oos = new DataOutputStream(socket.getOutputStream());
@@ -46,6 +116,7 @@ public class Main extends Application {
         DataInputStream ois = new DataInputStream(socket.getInputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         runAll(socket, br, oos, ois, reader);
+
     }
 
     private synchronized void runSender(Socket socket, BufferedReader br, BufferedWriter oos, DataInputStream ois) {
@@ -71,7 +142,7 @@ public class Main extends Application {
 
                             // пишем данные с консоли в канал сокета для сервера
                             //TODO: name
-                            clientCommand = "kek" + ": " + clientCommand;
+                            clientCommand = name + ": " + clientCommand;
                             oos.write(clientCommand + "\n");
                             oos.flush();
                             //                    System.out.println(clientCommand);
@@ -113,7 +184,7 @@ public class Main extends Application {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -130,8 +201,8 @@ public class Main extends Application {
 //                    e.printStackTrace();
 //                }
                 while (true) {
-                    try  {
-                        Thread.sleep(1000);
+                    try {
+                        Thread.sleep(1500);
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
@@ -141,10 +212,11 @@ public class Main extends Application {
 //                            System.out.println(in);
 
                         // если успел забираем ответ из канала сервера в сокете и сохраняем её в ois переменную,  печатаем на свою клиентскую консоль
-                        //                        System.out.println("reading...");
+                        System.out.println("reading...");
                         String in = reader.readLine();
+                        System.out.println("After reading");
                         //                        String in = ois.readUTF();
-                        showingField.getItems().add(in);
+                            showingField.getItems().add(in);
 //                            System.out.println(in);
 
 //                        }

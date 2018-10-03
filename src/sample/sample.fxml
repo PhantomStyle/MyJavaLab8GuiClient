@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -13,5 +14,10 @@
       <TextField fx:id="enteringField" layoutX="54.0" layoutY="317.0" prefHeight="25.0" prefWidth="429.0" />
       <Button fx:id="button" layoutX="483.0" layoutY="317.0" mnemonicParsing="false" onAction="#handleButton1Action" text="Send" />
       <ListView fx:id="showingField" layoutX="54.0" layoutY="32.0" prefHeight="279.0" prefWidth="468.0" />
+      <TextField fx:id="loginField" layoutX="194.0" layoutY="68.0" />
+      <PasswordField fx:id="passField" layoutX="194.0" layoutY="188.0" />
+      <Button fx:id="buttonLogin" layoutX="243.0" layoutY="259.0" mnemonicParsing="false" onAction="#onLoginButton" text="Login" />
+      <Text fx:id="text1" layoutX="257.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login" />
+      <Text fx:id="text2" layoutX="257.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
    </children>
 </AnchorPane>
