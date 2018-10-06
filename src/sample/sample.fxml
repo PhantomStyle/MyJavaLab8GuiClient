@@ -13,14 +13,6 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Main">
    <children>
-      <BarChart fx:id="gist" layoutX="7.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </BarChart>
       <TextField fx:id="enteringField" layoutX="54.0" layoutY="317.0" prefHeight="25.0" prefWidth="429.0" />
       <Button fx:id="button" layoutX="483.0" layoutY="317.0" mnemonicParsing="false" onAction="#handleButton1Action" text="Send" />
       <TextField fx:id="loginField" layoutX="194.0" layoutY="68.0" />
@@ -32,7 +24,7 @@
       <Button fx:id="blackB" layoutX="194.0" layoutY="361.0" mnemonicParsing="false" onAction="#onBlack" text="Black" />
       <Button fx:id="redB" layoutX="263.0" layoutY="361.0" mnemonicParsing="false" onAction="#onRed" text="Red" />
       <Button fx:id="blueB" layoutX="343.0" layoutY="361.0" mnemonicParsing="false" onAction="#onBlue" text="Blue" />
-      <CheckBox fx:id="check" layoutX="513.0" layoutY="378.0" mnemonicParsing="false" onAction="#onCheckAction" text="CheckBox" />
+      <CheckBox fx:id="check" layoutX="513.0" layoutY="378.0" mnemonicParsing="false" onAction="#onCheckAction" text="Statistic" />
       <ListView fx:id="showingField" layoutX="54.0" layoutY="32.0" prefHeight="279.0" prefWidth="468.0" />
       <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="32.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="55.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
@@ -46,5 +38,13 @@
       <Rectangle fx:id="r10" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="236.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="r11" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="260.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="r12" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="284.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <BarChart fx:id="gist" layoutX="7.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </BarChart>
    </children>
 </AnchorPane>

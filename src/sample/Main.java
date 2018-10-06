@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -17,7 +18,9 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Main extends Application {
@@ -127,6 +130,10 @@ public class Main extends Application {
 
     private String name = "";
 
+    private Map<String, Integer> statMap = new HashMap<>();
+
+//    private List<XYChart<String, Integer>> gistList = new ArrayList<>();
+
     @FXML
     void onLoginButton(ActionEvent event) {
         String login = loginField.getText();
@@ -146,7 +153,7 @@ public class Main extends Application {
 //                blackB.setVisible(true);
 //                blueB.setVisible(true);
 //                redB.setVisible(true);
-                check.setVisible(false);
+                check.setVisible(true);
                 button.setVisible(true);
                 showingField.setVisible(true);
                 enteringField.setVisible(true);
@@ -222,6 +229,9 @@ public class Main extends Application {
         blueB.setVisible(false);
         blackB.setVisible(false);
         redB.setVisible(false);
+
+        statMap.put("kek", 0);
+        statMap.put("root", 0);
 
         Socket socket = new Socket("localhost", 3345);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -333,11 +343,15 @@ public class Main extends Application {
                         mapOfMessages.put(idOfMessage, "        " + in);
                         showingField.getItems().add("        " + in);
                         mapOfRectangles.get(idOfMessage).setVisible(true);
-                        if(!in.split(":")[0].contains(name)){
+                        if (!in.split(":")[0].contains(name)) {
                             mapOfRectangles.get(idOfMessage).setFill(javafx.scene.paint.Color.BROWN);
                         }
                         idOfMessage++;
 //                            System.out.println(in);
+
+                        String tempName = in.split(":")[0].trim();
+                        statMap.put(tempName, statMap.get(tempName) + 1);
+
 
 //                        }
                     } catch (IOException e) {
@@ -366,7 +380,18 @@ public class Main extends Application {
 
     @FXML
     private void onCheckAction() {
-        check.setVisible(true);
+        XYChart.Series dataSeries1 = new XYChart.Series();
+        for (Map.Entry<String, Integer> entry : statMap.entrySet()) {
+            dataSeries1.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+        }
+        gist.getData().setAll(dataSeries1);
+//        VBox vBox = new VBox(gist);
+        if (check.isSelected()) {
+            gist.setVisible(true);
+        } else {
+            gist.setVisible(false);
+        }
+
     }
 
     @FXML
