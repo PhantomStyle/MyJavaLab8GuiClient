@@ -27,6 +27,15 @@ public class Main extends Application {
 
 
     @FXML
+    private TextField enterIp;
+
+    @FXML
+    private Button buttonIp;
+
+    @FXML
+    private Text textIp;
+
+    @FXML
     private ListView<String> showingField;
 
     @FXML
@@ -149,19 +158,23 @@ public class Main extends Application {
                 buttonLogin.setVisible(false);
                 text1.setVisible(false);
                 text2.setVisible(false);
+////                greenB.setVisible(true);
+////                blackB.setVisible(true);
+////                blueB.setVisible(true);
+////                redB.setVisible(true);
+//                check.setVisible(true);
+//                button.setVisible(true);
+//                showingField.setVisible(true);
+//                enteringField.setVisible(true);
+//
 //                greenB.setVisible(true);
-//                blackB.setVisible(true);
 //                blueB.setVisible(true);
+//                blackB.setVisible(true);
 //                redB.setVisible(true);
-                check.setVisible(true);
-                button.setVisible(true);
-                showingField.setVisible(true);
-                enteringField.setVisible(true);
+                buttonIp.setVisible(true);
+                textIp.setVisible(true);
+                enterIp.setVisible(true);
 
-                greenB.setVisible(true);
-                blueB.setVisible(true);
-                blackB.setVisible(true);
-                redB.setVisible(true);
 
                 name = login;
             }
@@ -230,16 +243,71 @@ public class Main extends Application {
         blackB.setVisible(false);
         redB.setVisible(false);
 
+        buttonIp.setVisible(false);
+        textIp.setVisible(false);
+        enterIp.setVisible(false);
+
         statMap.put("kek", 0);
         statMap.put("root", 0);
 
-        Socket socket = new Socket("localhost", 3345);
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//        DataOutputStream oos = new DataOutputStream(socket.getOutputStream());
-        BufferedWriter oos = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        DataInputStream ois = new DataInputStream(socket.getInputStream());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        runAll(socket, br, oos, ois, reader);
+
+        final BufferedReader[] br = {null};
+        final BufferedWriter[] oos = {null};
+        final DataInputStream[] ois = {null};
+        final BufferedReader[] reader = {null};
+
+        final Socket[] socket = {null};
+        buttonIp.setOnAction(event -> {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String host = enterIp.getText();
+            try {
+                socket[0] = new Socket(host, 3345);
+                br[0] = new BufferedReader(new InputStreamReader(System.in));
+                oos[0] = new BufferedWriter(new OutputStreamWriter(socket[0].getOutputStream()));
+                ois[0] = new DataInputStream(socket[0].getInputStream());
+                reader[0] = new BufferedReader(new InputStreamReader(socket[0].getInputStream()));
+                runAll(socket[0], br[0], oos[0], ois[0], reader[0]);
+
+
+//                loginField.setVisible(false);
+//                passField.setVisible(false);
+//                buttonLogin.setVisible(false);
+//                text1.setVisible(false);
+//                text2.setVisible(false);
+//                greenB.setVisible(true);
+//                blackB.setVisible(true);
+//                blueB.setVisible(true);
+//                redB.setVisible(true);
+                check.setVisible(true);
+                button.setVisible(true);
+                showingField.setVisible(true);
+                enteringField.setVisible(true);
+
+                greenB.setVisible(true);
+                blueB.setVisible(true);
+                blackB.setVisible(true);
+                redB.setVisible(true);
+
+                buttonIp.setVisible(false);
+                textIp.setVisible(false);
+                enterIp.setVisible(false);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Stage st = new Stage();
+                st.initModality(Modality.APPLICATION_MODAL);
+                st.initOwner(stage);
+                VBox dialogVbox = new VBox(20);
+                dialogVbox.getChildren().add(new Text("Wrong ip"));
+                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+                st.setScene(dialogScene);
+                st.show();
+            }
+        });
 
     }
 

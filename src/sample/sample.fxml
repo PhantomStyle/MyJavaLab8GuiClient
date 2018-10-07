@@ -46,5 +46,8 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </BarChart>
+      <TextField fx:id="enterIp" layoutX="207.0" layoutY="100.0" />
+      <Button fx:id="buttonIp" layoutX="256.0" layoutY="188.0" mnemonicParsing="false" text="Enter" />
+      <Text fx:id="textIp" layoutX="261.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter ip" />
    </children>
 </AnchorPane>
