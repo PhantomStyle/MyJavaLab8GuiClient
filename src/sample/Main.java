@@ -11,6 +11,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -116,7 +117,7 @@ public class Main extends Application {
 
     private String clientCommand = "";
 
-    private Color color;
+    private String color = "";
 
 
     private static Stage stage;
@@ -137,9 +138,20 @@ public class Main extends Application {
         db.put("kek", "kek");
     }
 
+    private static Map<String, javafx.scene.paint.Color> colorMap = new HashMap<>();
+
+    static {
+        colorMap.put("root", Color.BLACK);
+        colorMap.put("kek", Color.RED);
+    }
+
     private String name = "";
 
     private Map<String, Integer> statMap = new HashMap<>();
+
+    BufferedWriter writerForButtons = null;
+
+    private boolean flag = true;
 
 //    private List<XYChart<String, Integer>> gistList = new ArrayList<>();
 
@@ -270,6 +282,7 @@ public class Main extends Application {
                 oos[0] = new BufferedWriter(new OutputStreamWriter(socket[0].getOutputStream()));
                 ois[0] = new DataInputStream(socket[0].getInputStream());
                 reader[0] = new BufferedReader(new InputStreamReader(socket[0].getInputStream()));
+                writerForButtons = oos[0];
                 runAll(socket[0], br[0], oos[0], ois[0], reader[0]);
 
 
@@ -406,19 +419,62 @@ public class Main extends Application {
                         // если успел забираем ответ из канала сервера в сокете и сохраняем её в ois переменную,  печатаем на свою клиентскую консоль
                         System.out.println("reading...");
                         String in = reader.readLine();
-                        System.out.println("After reading");
-                        //                        String in = ois.readUTF();
-                        mapOfMessages.put(idOfMessage, "        " + in);
-                        showingField.getItems().add("        " + in);
-                        mapOfRectangles.get(idOfMessage).setVisible(true);
-                        if (!in.split(":")[0].contains(name)) {
-                            mapOfRectangles.get(idOfMessage).setFill(javafx.scene.paint.Color.BROWN);
-                        }
-                        idOfMessage++;
+                        if (!in.startsWith("$$")) {
+                            System.out.println("After reading");
+                            //                        String in = ois.readUTF();
+                            mapOfMessages.put(idOfMessage, "        " + in);
+                            showingField.getItems().add("        " + in);
+                            mapOfRectangles.get(idOfMessage).setVisible(true);
+//                        if (!in.split(":")[0].contains(name)) {
+                            String nameOfSender = in.split(":")[0];
+                            mapOfRectangles.get(idOfMessage).setFill(colorMap.get(nameOfSender));
+//                        }
+                            idOfMessage++;
 //                            System.out.println(in);
 
-                        String tempName = in.split(":")[0].trim();
-                        statMap.put(tempName, statMap.get(tempName) + 1);
+                            String tempName = in.split(":")[0].trim();
+                            statMap.put(tempName, statMap.get(tempName) + 1);
+                        } else {
+                            String nameOfSender = in.split(" ")[1].trim();
+                            switch (in.split(" ")[2].trim()) {
+                                case "Black":
+                                    for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+                                        if (entry.getValue().split(":")[0].trim().contains(nameOfSender)) {
+                                            mapOfRectangles.get(entry.getKey()).setFill(Color.BLACK);
+                                            mapOfRectangles.get(entry.getKey()).setVisible(true);
+                                            colorMap.put(nameOfSender, Color.BLACK);
+                                        }
+                                    }
+                                    break;
+                                case "Green":
+                                    for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+                                        if (entry.getValue().split(":")[0].trim().contains(nameOfSender)) {
+                                            mapOfRectangles.get(entry.getKey()).setFill(Color.GREEN);
+                                            mapOfRectangles.get(entry.getKey()).setVisible(true);
+                                            colorMap.put(nameOfSender, Color.GREEN);
+                                        }
+                                    }
+                                    break;
+                                case "Blue":
+                                    for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+                                        if (entry.getValue().split(":")[0].trim().contains(nameOfSender)) {
+                                            mapOfRectangles.get(entry.getKey()).setFill(Color.BLUE);
+                                            mapOfRectangles.get(entry.getKey()).setVisible(true);
+                                            colorMap.put(nameOfSender, Color.BLUE);
+                                        }
+                                    }
+                                    break;
+                                case "Red":
+                                    for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+                                        if (entry.getValue().split(":")[0].trim().contains(nameOfSender)) {
+                                            mapOfRectangles.get(entry.getKey()).setFill(Color.RED);
+                                            mapOfRectangles.get(entry.getKey()).setVisible(true);
+                                            colorMap.put(nameOfSender, Color.RED);
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
 
 
 //                        }
@@ -463,10 +519,11 @@ public class Main extends Application {
     }
 
     @FXML
-    private void onBlue() {
+    private void onBlue() throws IOException {
+         flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (!(entry.getValue().split(":")[0].contains(name))) {
-                if (mapOfRectangles.get(entry.getKey()).getFill().equals(javafx.scene.paint.Color.BLUE)) {
+//            if (!(entry.getValue().split(":")[0].contains(name))) {
+                if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.BLUE)) {
                     Stage st = new Stage();
                     st.initModality(Modality.APPLICATION_MODAL);
                     st.initOwner(stage);
@@ -475,22 +532,31 @@ public class Main extends Application {
                     Scene dialogScene = new Scene(dialogVbox, 300, 200);
                     st.setScene(dialogScene);
                     st.show();
+                    flag = false;
                 }
-            }
+//            }
         }
-        for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (entry.getValue().split(":")[0].contains(name)) {
-                mapOfRectangles.get(entry.getKey()).setFill(javafx.scene.paint.Color.BLUE);
-                mapOfRectangles.get(entry.getKey()).setVisible(true);
-            }
+        if (flag) {
+            writerForButtons.write("$$ " + name + " Blue\n");
+            writerForButtons.flush();
+//            colorMap.put(login, Color.BLUE);
+//
+//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+////            if (entry.getValue().split(":")[0].contains(name)) {
+//                String nameOfSender = entry.getValue().split(":")[0].trim();
+//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
+//                mapOfRectangles.get(entry.getKey()).setVisible(true);
+////            }
+//            }
         }
     }
 
     @FXML
-    private void onRed() {
+    private void onRed() throws IOException {
+         flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (!(entry.getValue().split(":")[0].contains(name))) {
-                if (mapOfRectangles.get(entry.getKey()).getFill().equals(javafx.scene.paint.Color.RED)) {
+//            if (!(entry.getValue().split(":")[0].contains(name))) {
+            if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.RED)) {
                     Stage st = new Stage();
                     st.initModality(Modality.APPLICATION_MODAL);
                     st.initOwner(stage);
@@ -499,22 +565,31 @@ public class Main extends Application {
                     Scene dialogScene = new Scene(dialogVbox, 300, 200);
                     st.setScene(dialogScene);
                     st.show();
+                    flag = false;
                 }
-            }
+//            }
         }
-        for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (entry.getValue().split(":")[0].contains(name)) {
-                mapOfRectangles.get(entry.getKey()).setFill(javafx.scene.paint.Color.RED);
-                mapOfRectangles.get(entry.getKey()).setVisible(true);
-            }
+        if (flag) {
+            writerForButtons.write("$$ " + name + " Red\n");
+            writerForButtons.flush();
+//            colorMap.put(login, Color.RED);
+//
+//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+////            if (entry.getValue().split(":")[0].contains(name)) {
+//                String nameOfSender = entry.getValue().split(":")[0].trim();
+//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
+//                mapOfRectangles.get(entry.getKey()).setVisible(true);
+////            }
+//            }
         }
     }
 
     @FXML
-    private void onBlack() {
+    private void onBlack() throws IOException {
+         flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (!(entry.getValue().split(":")[0].contains(name))) {
-                if (mapOfRectangles.get(entry.getKey()).getFill().equals(javafx.scene.paint.Color.BLACK)) {
+//            if (!(entry.getValue().split(":")[0].contains(name))) {
+            if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.BLACK)) {
                     Stage st = new Stage();
                     st.initModality(Modality.APPLICATION_MODAL);
                     st.initOwner(stage);
@@ -523,22 +598,31 @@ public class Main extends Application {
                     Scene dialogScene = new Scene(dialogVbox, 300, 200);
                     st.setScene(dialogScene);
                     st.show();
-                }
+                    flag = false;
+//                }
             }
         }
-        for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (entry.getValue().split(":")[0].contains(name)) {
-                mapOfRectangles.get(entry.getKey()).setFill(javafx.scene.paint.Color.BLACK);
-                mapOfRectangles.get(entry.getKey()).setVisible(true);
-            }
+        if (flag) {
+            writerForButtons.write("$$ " + name + " Black\n");
+            writerForButtons.flush();
+//            colorMap.put(login, Color.BLACK);
+//
+//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+////            if (entry.getValue().split(":")[0].contains(name)) {
+//                String nameOfSender = entry.getValue().split(":")[0].trim();
+//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
+//                mapOfRectangles.get(entry.getKey()).setVisible(true);
+////            }
+//            }
         }
     }
 
     @FXML
-    private void onGreen() {
+    private void onGreen() throws IOException {
+         flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (!(entry.getValue().split(":")[0].contains(name))) {
-                if (mapOfRectangles.get(entry.getKey()).getFill().equals(javafx.scene.paint.Color.GREEN)) {
+//            if (!(entry.getValue().split(":")[0].contains(name))) {
+            if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.GREEN)) {
                     Stage st = new Stage();
                     st.initModality(Modality.APPLICATION_MODAL);
                     st.initOwner(stage);
@@ -547,14 +631,24 @@ public class Main extends Application {
                     Scene dialogScene = new Scene(dialogVbox, 300, 200);
                     st.setScene(dialogScene);
                     st.show();
+                    flag = false;
                 }
-            }
+//            }
         }
-        for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-            if (entry.getValue().split(":")[0].contains(name)) {
-                mapOfRectangles.get(entry.getKey()).setFill(javafx.scene.paint.Color.GREEN);
-                mapOfRectangles.get(entry.getKey()).setVisible(true);
-            }
+        if (flag) {
+            writerForButtons.write("$$ " + name + " Green\n");
+            writerForButtons.flush();
+//            colorMap.put(login, Color.GREEN);
+//
+//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
+////            if (entry.getValue().split(":")[0].contains(name)) {
+//                String nameOfSender = entry.getValue().split(":")[0].trim();
+//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
+//                mapOfRectangles.get(entry.getKey()).setVisible(true);
+////            }
+//            }
+
+
         }
     }
 
