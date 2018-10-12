@@ -5,9 +5,12 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -28,97 +31,95 @@ public class Main extends Application {
 
 
     @FXML
-    private TextField enterIp;
+    TextField enterIp;
 
     @FXML
-    private Button buttonIp;
+    Button buttonIp;
 
     @FXML
-    private Text textIp;
+    Text textIp;
 
     @FXML
-    private ListView<String> showingField;
+    ListView<String> showingField;
 
     @FXML
-    private Rectangle r2;
+    Rectangle r2;
 
     @FXML
-    private Rectangle r3;
+    Rectangle r3;
 
     @FXML
-    private Rectangle r4;
+    Rectangle r4;
 
     @FXML
-    private Rectangle r5;
+    Rectangle r5;
 
     @FXML
-    private Button buttonLogin;
+    Button buttonLogin;
 
     @FXML
-    private Rectangle r6;
+    Rectangle r6;
 
     @FXML
-    private Rectangle r7;
+    Rectangle r7;
 
     @FXML
-    private Rectangle r8;
+    Rectangle r8;
 
     @FXML
-    private Rectangle r9;
+    Rectangle r9;
 
     @FXML
-    private Button button;
+    Button button;
 
     @FXML
-    private Rectangle r10;
+    Rectangle r10;
 
     @FXML
-    private PasswordField passField;
+    PasswordField passField;
 
     @FXML
-    private Rectangle r12;
+    Rectangle r12;
 
     @FXML
-    private Rectangle r11;
+    Rectangle r11;
 
     @FXML
-    private TextField enteringField;
+    TextField enteringField;
 
     @FXML
-    private Button redB;
+    Button redB;
 
     @FXML
-    private Button greenB;
+    Button greenB;
 
     @FXML
-    private CheckBox check;
+    CheckBox check;
 
     @FXML
-    private BarChart<?, ?> gist;
+    BarChart<?, ?> gist;
 
     @FXML
-    private Text text1;
+    Text text1;
 
     @FXML
-    private Text text2;
+    Text text2;
 
     @FXML
-    private Button blackB;
+    Button blackB;
 
     @FXML
-    private TextField loginField;
+    TextField loginField;
 
     @FXML
-    private Button blueB;
+    Button blueB;
 
     @FXML
-    private Rectangle r1;
+    Rectangle r1;
 
+    private Controller controller;
 
     private String clientCommand = "";
-
-    private String color = "";
-
 
     private static Stage stage;
 
@@ -153,40 +154,22 @@ public class Main extends Application {
 
     private boolean flag = true;
 
-//    private List<XYChart<String, Integer>> gistList = new ArrayList<>();
+    private final BufferedWriter[] oos = {null};
+    private final DataInputStream[] ois = {null};
+    private final BufferedReader[] reader = {null};
+    private final Socket[] socket = {null};
+
 
     @FXML
-    void onLoginButton(ActionEvent event) {
+    void onLoginButton() {
         String login = loginField.getText();
         String pass = passField.getText();
         this.login = login;
         this.pass = pass;
         try {
             if (db.get(login).equals(pass)) {
-//                stage.close();
-//                new Thread(() -> Main.launch(Main.class)).start();
-                loginField.setVisible(false);
-                passField.setVisible(false);
-                buttonLogin.setVisible(false);
-                text1.setVisible(false);
-                text2.setVisible(false);
-////                greenB.setVisible(true);
-////                blackB.setVisible(true);
-////                blueB.setVisible(true);
-////                redB.setVisible(true);
-//                check.setVisible(true);
-//                button.setVisible(true);
-//                showingField.setVisible(true);
-//                enteringField.setVisible(true);
-//
-//                greenB.setVisible(true);
-//                blueB.setVisible(true);
-//                blackB.setVisible(true);
-//                redB.setVisible(true);
-                buttonIp.setVisible(true);
-                textIp.setVisible(true);
-                enterIp.setVisible(true);
 
+                setIpChoseScene();
 
                 name = login;
             }
@@ -215,27 +198,8 @@ public class Main extends Application {
 
     @FXML
     public void initialize() throws IOException {
-        button.setVisible(false);
-        showingField.setVisible(false);
-        enteringField.setVisible(false);
-//        greenB.setVisible(false);
-//        blackB.setVisible(false);
-//        blueB.setVisible(false);
-//        redB.setVisible(false);
-        check.setVisible(false);
-        gist.setVisible(false);
-        r1.setVisible(false);
-        r2.setVisible(false);
-        r3.setVisible(false);
-        r4.setVisible(false);
-        r5.setVisible(false);
-        r6.setVisible(false);
-        r7.setVisible(false);
-        r8.setVisible(false);
-        r9.setVisible(false);
-        r10.setVisible(false);
-        r11.setVisible(false);
-        r12.setVisible(false);
+        controller = new Controller();
+        setLoginScene();
 
         mapOfRectangles.put(0, r1);
         mapOfRectangles.put(1, r2);
@@ -250,25 +214,11 @@ public class Main extends Application {
         mapOfRectangles.put(10, r11);
         mapOfRectangles.put(11, r12);
 
-        greenB.setVisible(false);
-        blueB.setVisible(false);
-        blackB.setVisible(false);
-        redB.setVisible(false);
-
-        buttonIp.setVisible(false);
-        textIp.setVisible(false);
-        enterIp.setVisible(false);
-
         statMap.put("kek", 0);
         statMap.put("root", 0);
 
 
-        final BufferedReader[] br = {null};
-        final BufferedWriter[] oos = {null};
-        final DataInputStream[] ois = {null};
-        final BufferedReader[] reader = {null};
 
-        final Socket[] socket = {null};
         buttonIp.setOnAction(event -> {
             try {
                 Thread.sleep(1500);
@@ -278,36 +228,14 @@ public class Main extends Application {
             String host = enterIp.getText();
             try {
                 socket[0] = new Socket(host, 3345);
-                br[0] = new BufferedReader(new InputStreamReader(System.in));
                 oos[0] = new BufferedWriter(new OutputStreamWriter(socket[0].getOutputStream()));
                 ois[0] = new DataInputStream(socket[0].getInputStream());
                 reader[0] = new BufferedReader(new InputStreamReader(socket[0].getInputStream()));
                 writerForButtons = oos[0];
-                runAll(socket[0], br[0], oos[0], ois[0], reader[0]);
+                runAll(socket[0], oos[0], ois[0], reader[0]);
 
 
-//                loginField.setVisible(false);
-//                passField.setVisible(false);
-//                buttonLogin.setVisible(false);
-//                text1.setVisible(false);
-//                text2.setVisible(false);
-//                greenB.setVisible(true);
-//                blackB.setVisible(true);
-//                blueB.setVisible(true);
-//                redB.setVisible(true);
-                check.setVisible(true);
-                button.setVisible(true);
-                showingField.setVisible(true);
-                enteringField.setVisible(true);
-
-                greenB.setVisible(true);
-                blueB.setVisible(true);
-                blackB.setVisible(true);
-                redB.setVisible(true);
-
-                buttonIp.setVisible(false);
-                textIp.setVisible(false);
-                enterIp.setVisible(false);
+                setChatScene();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -324,44 +252,28 @@ public class Main extends Application {
 
     }
 
-    private synchronized void runSender(Socket socket, BufferedReader br, BufferedWriter oos, DataInputStream ois) {
+    private synchronized void runSender(Socket socket, BufferedWriter oos, DataInputStream ois) {
         new Thread() {
 
             @Override
             public void run() {
                 System.out.println(1);
                 while (!socket.isOutputShutdown()) {
-// ждём консоли клиента на предмет появления в ней данных
+
                     try {
                         Thread.sleep(1000);
                         if (!clientCommand.equals("")) {
-//                            System.out.println(2);
-                            // данные появились - работаем
-                            System.out.println("Client start writing in channel...");
-//                            Thread.sleep(1000);
-//                            String clientCommand = "";
-//                            if(button.isPressed()) {
-//                                clientCommand = enteringField.getText();
-//                            }
-//                            String clientCommand = br.readLine();
 
-                            // пишем данные с консоли в канал сокета для сервера
-                            //TODO: name
+                            System.out.println("Client start writing in channel...");
+
                             clientCommand = name + ": " + clientCommand;
                             oos.write(clientCommand + "\n");
                             oos.flush();
-                            //                    System.out.println(clientCommand);
-//                            Thread.sleep(1000);
-                            // ждём чтобы сервер успел прочесть сообщение из сокета и ответить
 
-                            // проверяем условие выхода из соединения
                             if (clientCommand.equalsIgnoreCase("quit")) {
 
-                                // если условие выхода достигнуто разъединяемся
                                 System.out.println("Client kill connections");
-//                                Thread.sleep(2000);
 
-                                // смотрим что нам ответил сервер на последок перед закрытием ресурсов
                                 if (ois.read() > -1) {
                                     System.out.println("reading...");
                                     String in = ois.readUTF();
@@ -369,7 +281,6 @@ public class Main extends Application {
                                 }
 
 
-                                // после предварительных приготовлений выходим из цикла записи чтения
                                 break;
                             }
                             clientCommand = "";
@@ -384,7 +295,7 @@ public class Main extends Application {
         }.start();
     }
 
-    private synchronized void runPrinter(BufferedReader reader, DataInputStream ois, Socket socket) {
+    private synchronized void runPrinter(BufferedReader reader) {
         new Thread() {
             @Override
             public void run() {
@@ -393,44 +304,19 @@ public class Main extends Application {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-//                InputStream inputStream = null;
-//                try {
-//                    inputStream = socket.getInputStream();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                BufferedReader reader1 = null;
-//                try {
-//                    reader1 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
                 while (true) {
                     try {
                         Thread.sleep(1500);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-
-//                        String in = reader.readLine();
-//                        if (reader.ready()) {
-//                            System.out.println(in);
-
-                        // если успел забираем ответ из канала сервера в сокете и сохраняем её в ois переменную,  печатаем на свою клиентскую консоль
                         System.out.println("reading...");
                         String in = reader.readLine();
                         if (!in.startsWith("$$")) {
                             System.out.println("After reading");
-                            //                        String in = ois.readUTF();
                             mapOfMessages.put(idOfMessage, "        " + in);
                             showingField.getItems().add("        " + in);
                             mapOfRectangles.get(idOfMessage).setVisible(true);
-//                        if (!in.split(":")[0].contains(name)) {
                             String nameOfSender = in.split(":")[0];
                             mapOfRectangles.get(idOfMessage).setFill(colorMap.get(nameOfSender));
-//                        }
                             idOfMessage++;
-//                            System.out.println(in);
 
                             String tempName = in.split(":")[0].trim();
                             statMap.put(tempName, statMap.get(tempName) + 1);
@@ -488,14 +374,14 @@ public class Main extends Application {
         }.start();
     }
 
-    private synchronized void runAll(Socket socket, BufferedReader br, BufferedWriter oos, DataInputStream ois, BufferedReader reader) {
-        runSender(socket, br, oos, ois);
-        runPrinter(reader, ois, socket);
+    private synchronized void runAll(Socket socket, BufferedWriter oos, DataInputStream ois, BufferedReader reader) {
+        runSender(socket, oos, ois);
+        runPrinter(reader);
     }
 
 
     @FXML
-    private void handleButton1Action(ActionEvent event) {
+    private void handleButton1Action() {
 
         clientCommand = enteringField.getText();
         enteringField.clear();
@@ -509,147 +395,148 @@ public class Main extends Application {
             dataSeries1.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
         }
         gist.getData().setAll(dataSeries1);
-//        VBox vBox = new VBox(gist);
         if (check.isSelected()) {
-            gist.setVisible(true);
+//            gist.setVisible(true);
+            Stage stage = new Stage();
+            stage.setTitle("");
+            stage.setWidth(500);
+            stage.setHeight(500);
+            Scene scene = new Scene(new Group());
+
+            VBox root = new VBox();
+
+
+            root.getChildren().addAll(gist);
+            scene.setRoot(root);
+
+            stage.setScene(scene);
+            stage.show();
+            flag = false;
+
         } else {
-            gist.setVisible(false);
+//            gist.setVisible(false);
         }
 
     }
 
     @FXML
     private void onBlue() throws IOException {
-         flag = true;
+        flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-//            if (!(entry.getValue().split(":")[0].contains(name))) {
-                if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.BLUE)) {
-                    Stage st = new Stage();
-                    st.initModality(Modality.APPLICATION_MODAL);
-                    st.initOwner(stage);
-                    VBox dialogVbox = new VBox(20);
-                    dialogVbox.getChildren().add(new Text("Color is used"));
-                    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-                    st.setScene(dialogScene);
-                    st.show();
-                    flag = false;
-                }
-//            }
+            if ((mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.BLUE)) {
+                showColorIsUsedMessage();
+            }
         }
         if (flag) {
             writerForButtons.write("$$ " + name + " Blue\n");
             writerForButtons.flush();
-//            colorMap.put(login, Color.BLUE);
-//
-//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-////            if (entry.getValue().split(":")[0].contains(name)) {
-//                String nameOfSender = entry.getValue().split(":")[0].trim();
-//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
-//                mapOfRectangles.get(entry.getKey()).setVisible(true);
-////            }
-//            }
         }
     }
 
     @FXML
     private void onRed() throws IOException {
-         flag = true;
+        flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-//            if (!(entry.getValue().split(":")[0].contains(name))) {
-            if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.RED)) {
-                    Stage st = new Stage();
-                    st.initModality(Modality.APPLICATION_MODAL);
-                    st.initOwner(stage);
-                    VBox dialogVbox = new VBox(20);
-                    dialogVbox.getChildren().add(new Text("Color is used"));
-                    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-                    st.setScene(dialogScene);
-                    st.show();
-                    flag = false;
-                }
-//            }
+            if ((mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.RED)) {
+                showColorIsUsedMessage();
+            }
         }
         if (flag) {
             writerForButtons.write("$$ " + name + " Red\n");
             writerForButtons.flush();
-//            colorMap.put(login, Color.RED);
-//
-//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-////            if (entry.getValue().split(":")[0].contains(name)) {
-//                String nameOfSender = entry.getValue().split(":")[0].trim();
-//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
-//                mapOfRectangles.get(entry.getKey()).setVisible(true);
-////            }
-//            }
         }
     }
 
     @FXML
     private void onBlack() throws IOException {
-         flag = true;
+        flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-//            if (!(entry.getValue().split(":")[0].contains(name))) {
-            if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.BLACK)) {
-                    Stage st = new Stage();
-                    st.initModality(Modality.APPLICATION_MODAL);
-                    st.initOwner(stage);
-                    VBox dialogVbox = new VBox(20);
-                    dialogVbox.getChildren().add(new Text("Color is used"));
-                    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-                    st.setScene(dialogScene);
-                    st.show();
-                    flag = false;
-//                }
+            if ((mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.BLACK)) {
+                showColorIsUsedMessage();
             }
         }
         if (flag) {
             writerForButtons.write("$$ " + name + " Black\n");
             writerForButtons.flush();
-//            colorMap.put(login, Color.BLACK);
-//
-//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-////            if (entry.getValue().split(":")[0].contains(name)) {
-//                String nameOfSender = entry.getValue().split(":")[0].trim();
-//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
-//                mapOfRectangles.get(entry.getKey()).setVisible(true);
-////            }
-//            }
         }
     }
 
     @FXML
     private void onGreen() throws IOException {
-         flag = true;
+        flag = true;
         for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-//            if (!(entry.getValue().split(":")[0].contains(name))) {
-            if (((Color)mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.GREEN)) {
-                    Stage st = new Stage();
-                    st.initModality(Modality.APPLICATION_MODAL);
-                    st.initOwner(stage);
-                    VBox dialogVbox = new VBox(20);
-                    dialogVbox.getChildren().add(new Text("Color is used"));
-                    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-                    st.setScene(dialogScene);
-                    st.show();
-                    flag = false;
-                }
-//            }
+            if ((mapOfRectangles.get(entry.getKey()).getFill()).equals(Color.GREEN)) {
+                showColorIsUsedMessage();
+            }
         }
         if (flag) {
             writerForButtons.write("$$ " + name + " Green\n");
             writerForButtons.flush();
-//            colorMap.put(login, Color.GREEN);
-//
-//            for (Map.Entry<Integer, String> entry : mapOfMessages.entrySet()) {
-////            if (entry.getValue().split(":")[0].contains(name)) {
-//                String nameOfSender = entry.getValue().split(":")[0].trim();
-//                mapOfRectangles.get(entry.getKey()).setFill(colorMap.get(nameOfSender));
-//                mapOfRectangles.get(entry.getKey()).setVisible(true);
-////            }
-//            }
-
-
         }
+    }
+
+    private void showColorIsUsedMessage() {
+        Stage st = new Stage();
+        st.initModality(Modality.APPLICATION_MODAL);
+        st.initOwner(stage);
+        VBox dialogVbox = new VBox(20);
+        dialogVbox.getChildren().add(new Text("Color is used"));
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        st.setScene(dialogScene);
+        st.show();
+        flag = false;
+    }
+
+    public void setLoginScene(){
+        button.setVisible(false);
+        showingField.setVisible(false);
+        enteringField.setVisible(false);
+        check.setVisible(false);
+        gist.setVisible(false);
+        r1.setVisible(false);
+        r2.setVisible(false);
+        r3.setVisible(false);
+        r4.setVisible(false);
+        r5.setVisible(false);
+        r6.setVisible(false);
+        r7.setVisible(false);
+        r8.setVisible(false);
+        r9.setVisible(false);
+        r10.setVisible(false);
+        r11.setVisible(false);
+        r12.setVisible(false);
+        greenB.setVisible(false);
+        blueB.setVisible(false);
+        blackB.setVisible(false);
+        redB.setVisible(false);
+        buttonIp.setVisible(false);
+        textIp.setVisible(false);
+        enterIp.setVisible(false);
+    }
+
+    public void setIpChoseScene(){
+        loginField.setVisible(false);
+        passField.setVisible(false);
+        buttonLogin.setVisible(false);
+        text1.setVisible(false);
+        text2.setVisible(false);
+        buttonIp.setVisible(true);
+        textIp.setVisible(true);
+        enterIp.setVisible(true);
+    }
+
+    public void setChatScene(){
+        check.setVisible(true);
+        button.setVisible(true);
+        showingField.setVisible(true);
+        enteringField.setVisible(true);
+        greenB.setVisible(true);
+        blueB.setVisible(true);
+        blackB.setVisible(true);
+        redB.setVisible(true);
+        buttonIp.setVisible(false);
+        textIp.setVisible(false);
+        enterIp.setVisible(false);
     }
 
     public static void main(String[] args) {
