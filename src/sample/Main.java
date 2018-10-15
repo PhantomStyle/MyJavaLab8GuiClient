@@ -13,6 +13,8 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -218,7 +220,6 @@ public class Main extends Application {
         statMap.put("root", 0);
 
 
-
         buttonIp.setOnAction(event -> {
             try {
                 Thread.sleep(1500);
@@ -310,20 +311,31 @@ public class Main extends Application {
                         System.out.println("reading...");
                         String in = reader.readLine();
                         if (!in.startsWith("$$")) {
+                            ImageView imageView = new ImageView();
                             System.out.println("After reading");
                             mapOfMessages.put(idOfMessage, "        " + in);
-                            showingField.getItems().add("        " + in);
-                            mapOfRectangles.get(idOfMessage).setVisible(true);
+//                            showingField.getItems().add("        " + in);
                             String nameOfSender = in.split(":")[0];
-                            Rectangle rect = new Rectangle();
-                            rect.setWidth(18);
-                            rect.setHeight(23);
-                            rect.setX(54);
-                            rect.setY(32 + 23 * idOfMessage);
+                            Rectangle rect = new Rectangle(54, 32 + 23 * idOfMessage, 18, 23);
+//                            rect.setWidth(18);
+//                            rect.setHeight(23);
+//                            rect.setX(54);
+//                            rect.setY(32 + 23 * idOfMessage);
                             mapOfRectangles.put(idOfMessage, rect);
                             mapOfRectangles.get(idOfMessage).setFill(colorMap.get(nameOfSender));
+                            mapOfRectangles.get(idOfMessage).setVisible(true);
+                            showingField.setCellFactory(param -> new ListCell<String>() {
+                                @Override
+                                public void updateItem(String name, boolean empty) {
+//                                    super.updateItem(name, empty);
+//                                    if (empty) {
+                                        setText(mapOfMessages.get(idOfMessage));
+//                                        imageView.setImage(new Image(Main.class.getResourceAsStream("/colors.png")));
+//                                        setGraphic(imageView);
+//                                    }
+                                }
+                            });
                             idOfMessage++;
-
                             String tempName = in.split(":")[0].trim();
                             statMap.put(tempName, statMap.get(tempName) + 1);
                         } else {
@@ -493,7 +505,7 @@ public class Main extends Application {
         flag = false;
     }
 
-    public void setLoginScene(){
+    public void setLoginScene() {
         button.setVisible(false);
         showingField.setVisible(false);
         enteringField.setVisible(false);
@@ -520,7 +532,7 @@ public class Main extends Application {
         enterIp.setVisible(false);
     }
 
-    public void setIpChoseScene(){
+    public void setIpChoseScene() {
         loginField.setVisible(false);
         passField.setVisible(false);
         buttonLogin.setVisible(false);
@@ -531,7 +543,7 @@ public class Main extends Application {
         enterIp.setVisible(true);
     }
 
-    public void setChatScene(){
+    public void setChatScene() {
         check.setVisible(true);
         button.setVisible(true);
         showingField.setVisible(true);
