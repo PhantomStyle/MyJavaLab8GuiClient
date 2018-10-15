@@ -201,18 +201,18 @@ public class Main extends Application {
         controller = new Controller();
         setLoginScene();
 
-        mapOfRectangles.put(0, r1);
-        mapOfRectangles.put(1, r2);
-        mapOfRectangles.put(2, r3);
-        mapOfRectangles.put(3, r4);
-        mapOfRectangles.put(4, r5);
-        mapOfRectangles.put(5, r6);
-        mapOfRectangles.put(6, r7);
-        mapOfRectangles.put(7, r8);
-        mapOfRectangles.put(8, r9);
-        mapOfRectangles.put(9, r10);
-        mapOfRectangles.put(10, r11);
-        mapOfRectangles.put(11, r12);
+//        mapOfRectangles.put(0, r1);
+//        mapOfRectangles.put(1, r2);
+//        mapOfRectangles.put(2, r3);
+//        mapOfRectangles.put(3, r4);
+//        mapOfRectangles.put(4, r5);
+//        mapOfRectangles.put(5, r6);
+//        mapOfRectangles.put(6, r7);
+//        mapOfRectangles.put(7, r8);
+//        mapOfRectangles.put(8, r9);
+//        mapOfRectangles.put(9, r10);
+//        mapOfRectangles.put(10, r11);
+//        mapOfRectangles.put(11, r12);
 
         statMap.put("kek", 0);
         statMap.put("root", 0);
@@ -315,6 +315,12 @@ public class Main extends Application {
                             showingField.getItems().add("        " + in);
                             mapOfRectangles.get(idOfMessage).setVisible(true);
                             String nameOfSender = in.split(":")[0];
+                            Rectangle rect = new Rectangle();
+                            rect.setWidth(18);
+                            rect.setHeight(23);
+                            rect.setX(54);
+                            rect.setY(32 + 23 * idOfMessage);
+                            mapOfRectangles.put(idOfMessage, rect);
                             mapOfRectangles.get(idOfMessage).setFill(colorMap.get(nameOfSender));
                             idOfMessage++;
 
