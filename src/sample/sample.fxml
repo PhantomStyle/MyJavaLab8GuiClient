@@ -25,7 +25,6 @@
       <Button fx:id="redB" layoutX="263.0" layoutY="361.0" mnemonicParsing="false" onAction="#onRed" text="Red" />
       <Button fx:id="blueB" layoutX="343.0" layoutY="361.0" mnemonicParsing="false" onAction="#onBlue" text="Blue" />
       <CheckBox fx:id="check" layoutX="513.0" layoutY="378.0" mnemonicParsing="false" onAction="#onCheckAction" text="Statistic" />
-      <ListView fx:id="showingField" layoutX="54.0" layoutY="32.0" prefHeight="279.0" prefWidth="468.0" />
       <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="32.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="55.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="23.0" layoutX="54.0" layoutY="78.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
@@ -49,5 +48,11 @@
       <TextField fx:id="enterIp" layoutX="207.0" layoutY="100.0" />
       <Button fx:id="buttonIp" layoutX="256.0" layoutY="188.0" mnemonicParsing="false" text="Enter" />
       <Text fx:id="textIp" layoutX="261.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter ip" />
+      <TableView fx:id="showingField" layoutX="54.0" layoutY="13.0" prefHeight="304.0" prefWidth="472.0">
+        <columns>
+          <TableColumn fx:id="rectColumn" prefWidth="56.0" text="label" />
+          <TableColumn fx:id="messageColumn" minWidth="0.0" prefWidth="415.0" text="messages" />
+        </columns>
+      </TableView>
    </children>
 </AnchorPane>

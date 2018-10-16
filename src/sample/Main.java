@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -21,13 +22,16 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main extends Application {
 
+    @FXML
+    private TableColumn<Message, Rectangle> rectColumn;
+
+    @FXML
+    private TableColumn<Message, String> messageColumn;
 
     @FXML
     TextField enterIp;
@@ -39,7 +43,7 @@ public class Main extends Application {
     Text textIp;
 
     @FXML
-    ListView<Object> showingField;
+    TableView<Message> showingField;
 
     @FXML
     Rectangle r2;
@@ -136,6 +140,7 @@ public class Main extends Application {
     static {
         db.put("root", "root");
         db.put("kek", "kek");
+        db.put("user", "user");
     }
 
     private static Map<String, javafx.scene.paint.Color> colorMap = new HashMap<>();
@@ -157,6 +162,8 @@ public class Main extends Application {
     private final DataInputStream[] ois = {null};
     private final BufferedReader[] reader = {null};
     private final Socket[] socket = {null};
+
+    private ObservableList<Message> observableList = FXCollections.observableArrayList();
 
 
     @FXML
@@ -309,8 +316,7 @@ public class Main extends Application {
                         if (!in.startsWith("$$")) {
                             ImageView imageView = new ImageView();
                             System.out.println("After reading");
-                            mapOfMessages.put(idOfMessage, "        " + in);
-//                            showingField.getItems().add("        " + in);
+                            mapOfMessages.put(idOfMessage, in);
                             String nameOfSender = in.split(":")[0];
                             Rectangle rect = new Rectangle(54, 32 + 23 * idOfMessage, 18, 23);
 //                            rect.setWidth(18);
@@ -320,31 +326,11 @@ public class Main extends Application {
                             mapOfRectangles.put(idOfMessage, rect);
                             mapOfRectangles.get(idOfMessage).setFill(colorMap.get(nameOfSender));
                             mapOfRectangles.get(idOfMessage).setVisible(true);
-                            ObservableList<Object> observableList = FXCollections.observableArrayList();
-                            observableList.add(rect);
-                            observableList.add(new Text("text"));
-//                            observableList.add(mapOfMessages.get(idOfMessage));
+//                            Message message = new Message(rect, "kekkk");
+                            observableList.add(new Message(mapOfRectangles.get(idOfMessage), mapOfMessages.get(idOfMessage)));
+                            rectColumn.setCellValueFactory(new PropertyValueFactory<Message, Rectangle>("rectangle"));
+                            messageColumn.setCellValueFactory(new PropertyValueFactory<Message, String>("text"));
                             showingField.setItems(observableList);
-//                            showingField.getItems().set(idOfMessage, rect);
-//                            showingField.getItems().setAll(Arrays.asList(rect, mapOfMessages.get(idOfMessage)));
-
-//                            showingField.setCellFactory(list -> new ListCell<String>() {
-//
-//                                {
-//                                    setWrapText(true);
-//                                    prefWidthProperty().bind(list.widthProperty().subtract(12));
-//                                }
-//
-//                                @Override
-//                                protected void updateItem(String item, boolean empty) {
-//                                    super.updateItem(item, empty);
-//                                    if (empty || item == null || item == null) {
-//                                        setText(null);
-//                                    } else {
-//                                        setText(item.toUpperCase());
-//                                    }
-//                                }
-//                            });
                             idOfMessage++;
                             String tempName = in.split(":")[0].trim();
                             statMap.put(tempName, statMap.get(tempName) + 1);
