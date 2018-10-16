@@ -1,19 +1,16 @@
 package sample;
 
-import javafx.animation.PathTransition;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -25,8 +22,8 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Main extends Application {
@@ -42,7 +39,7 @@ public class Main extends Application {
     Text textIp;
 
     @FXML
-    ListView<String> showingField;
+    ListView<Object> showingField;
 
     @FXML
     Rectangle r2;
@@ -250,7 +247,6 @@ public class Main extends Application {
                 st.show();
             }
         });
-
     }
 
     private synchronized void runSender(Socket socket, BufferedWriter oos, DataInputStream ois) {
@@ -324,17 +320,31 @@ public class Main extends Application {
                             mapOfRectangles.put(idOfMessage, rect);
                             mapOfRectangles.get(idOfMessage).setFill(colorMap.get(nameOfSender));
                             mapOfRectangles.get(idOfMessage).setVisible(true);
-                            showingField.setCellFactory(param -> new ListCell<String>() {
-                                @Override
-                                public void updateItem(String name, boolean empty) {
-//                                    super.updateItem(name, empty);
-//                                    if (empty) {
-                                        setText(mapOfMessages.get(idOfMessage));
-//                                        imageView.setImage(new Image(Main.class.getResourceAsStream("/colors.png")));
-//                                        setGraphic(imageView);
+                            ObservableList<Object> observableList = FXCollections.observableArrayList();
+                            observableList.add(rect);
+                            observableList.add(new Text("text"));
+//                            observableList.add(mapOfMessages.get(idOfMessage));
+                            showingField.setItems(observableList);
+//                            showingField.getItems().set(idOfMessage, rect);
+//                            showingField.getItems().setAll(Arrays.asList(rect, mapOfMessages.get(idOfMessage)));
+
+//                            showingField.setCellFactory(list -> new ListCell<String>() {
+//
+//                                {
+//                                    setWrapText(true);
+//                                    prefWidthProperty().bind(list.widthProperty().subtract(12));
+//                                }
+//
+//                                @Override
+//                                protected void updateItem(String item, boolean empty) {
+//                                    super.updateItem(item, empty);
+//                                    if (empty || item == null || item == null) {
+//                                        setText(null);
+//                                    } else {
+//                                        setText(item.toUpperCase());
 //                                    }
-                                }
-                            });
+//                                }
+//                            });
                             idOfMessage++;
                             String tempName = in.split(":")[0].trim();
                             statMap.put(tempName, statMap.get(tempName) + 1);
